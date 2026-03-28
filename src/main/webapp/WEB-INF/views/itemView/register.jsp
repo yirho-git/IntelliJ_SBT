@@ -43,10 +43,12 @@
     <button type="button" id="listBtn">list</button>
 </form>
 </body>
-<script type="text/javascript">
+<script src="/assets/js/item/upload.js">
 
+</script>
+<script type="text/javascript">
     let inputFile = document.querySelector('input[name="inputFile"]');
-    // 파일 선택시
+    // 파일 선택 및 변경시
     inputFile.addEventListener("change", async function (e) {
         console.log("File selected...!");
 
