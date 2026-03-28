@@ -3,6 +3,7 @@ package kr.or.ddit.controller.util;
 import jakarta.annotation.Nullable;
 import org.springframework.http.MediaType;
 import org.springframework.util.FileCopyUtils;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
@@ -55,13 +56,11 @@ public class UploadFileUtils {
         // Calendar 클래스 사용
         Calendar cal = Calendar.getInstance();
 
-        String yearPath = File.separator + cal.get(Calendar.YEAR);  // 경로 yyyy
-
+        String yearPath = File.separator + cal.get(Calendar.YEAR);  // File.separator는 구분자를 os환경에 맞게 '/','\' 로 변환해줌
         String monthPath = yearPath + File.separator + new DecimalFormat("00").format(cal.get(Calendar.MONTH) + 1);
 
         // 년 월 구조 폴더 생성
         makeDir(uploadPath, yearPath, monthPath);
-
 
         return monthPath;
     }
@@ -81,7 +80,7 @@ public class UploadFileUtils {
         String savedPath = calcPath(uploadPath);
 
         // 만들어진 경로와 파일명을 이용해 파일(업로드 타겟) 객체 생성
-        File target = new File(uploadPath + savedName);
+        File target = new File(uploadPath + savedPath, savedName);
         try {
             FileCopyUtils.copy(bytes, target);  // 스프링 내장 클래스 static 메서드, 파일 복사
         } catch (IOException e) {
@@ -93,6 +92,30 @@ public class UploadFileUtils {
         String uploadedFileName = savedPath.replace(File.separatorChar,'/') + "/" + savedName;
 
         String formatName = originalFileName.substring(originalFileName.lastIndexOf(".")+1);
+
+        return uploadedFileName;
+    } //파일 저장 경로는 calcPath()에서 OS에 맞게 File.separator로 생성하고, uploadFile()에서는 웹·DB에서 사용하기 위해 경로를 /로 통일해 별도로 변환한다.
+
+    /**
+     * uploadFile overloading method (recommended)
+     * @param uploadPath
+     * @param file
+     * @return uploadedFileName
+     */
+    public static String uploadFile(String uploadPath, MultipartFile file ) {
+        String savedName = UUID.randomUUID().toString() + "_" + file.getOriginalFilename();
+
+        String savedPath = calcPath(uploadPath);
+
+        File target = new File(uploadPath + savedPath, savedName);
+        try {
+            file.transferTo(target);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        String uploadedFileName = savedPath.replace(File.separatorChar,'/') + "/" + savedName;
+        // ex)savedPath(=> /26/03) + "/" + savedName(=> UUID_originalFileName)
 
         return uploadedFileName;
     }
