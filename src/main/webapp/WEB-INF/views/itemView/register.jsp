@@ -54,7 +54,7 @@
         let file = files[0];    // 내가 선택한 파일(multiple이 아니기에 첫번째만 가져와도 됨)
 
         let formData = new FormData();  // ajax 비동기 통신을 위한 FormData생성 (편지봉투)
-        formData.append("file", file);  // 위에 가져온 파일을 form에 첨부  (내용물)
+        formData.append("file", file);  // 위에 가져온 파일을 form에 첨부  (내용물 첨부)
 
         try {
             const resp = await fetch("/item/uploadFile",{
@@ -62,7 +62,8 @@
                 body:formData
             });
 
-            const data = await resp.json();
+            const data = await resp.text(); // 업로드된 파일의 경로를 반환받음 (uploadedFilePath)
+            console.log("data = resp.text() => ", data);
         } catch (err) {
             console.log(err);
         }
