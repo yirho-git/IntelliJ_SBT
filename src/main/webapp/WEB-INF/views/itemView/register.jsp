@@ -43,11 +43,10 @@
     <button type="button" id="listBtn">list</button>
 </form>
 </body>
-<script src="/assets/js/item/upload.js">
-
-</script>
+<script src="/assets/js/item/upload.js"></script>
 <script type="text/javascript">
-    let inputFile = document.querySelector('input[name="inputFile"]');
+    /* // .js로 분리
+    let inputFile = document.querySelector(`input[name="inputFile"]`);
     // 파일 선택 및 변경시
     inputFile.addEventListener("change", async function (e) {
         console.log("File selected...!");
@@ -70,7 +69,7 @@
             console.log(err);
         }
     });
-
+*/
     const listBtn = document.querySelector("#listBtn");
     listBtn.addEventListener("click", function () {
         location.href = "/item/list";
