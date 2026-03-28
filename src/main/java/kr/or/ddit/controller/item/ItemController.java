@@ -1,6 +1,7 @@
 package kr.or.ddit.controller.item;
 
 import kr.or.ddit.controller.item.service.IItemService;
+import kr.or.ddit.controller.util.UploadFileUtils;
 import kr.or.ddit.vo.Item;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +12,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.io.InputStream;
 
 @Slf4j
@@ -26,7 +28,7 @@ public class ItemController {
     @Value("${kr.or.ddit.upload.path}")
     private String uploadPath;
 
-    /*
+    /**
      * 업로드 파일 컨트롤러
      * @description : ajax 비동기 파일업로드,
      * register form에서 등록할 파일을 선택 할때마다 uploadPath의 경로(내 로컬 저장소)에 파일저장
@@ -36,12 +38,13 @@ public class ItemController {
      */
     @ResponseBody
     @PostMapping(value="/uploadFile", produces="text/plain;charset=utf-8" )
-    public ResponseEntity<byte[]> uploadFile(String fileName) {
+    public ResponseEntity<byte[]> uploadFile(MultipartFile file) throws IOException {
         log.info("uploadFile()...");
-        InputStream in = null;
-        ResponseEntity<byte[]> entity = null;
+        log.info("fileName:" + file.getOriginalFilename());
 
+        String savedName = UploadFileUtils.uploadFile(uploadPath, file.getOriginalFilename(), file.getBytes());
 
+        return null;
     }
 
     @GetMapping("/register")
@@ -61,8 +64,5 @@ public class ItemController {
         model.addAttribute("msg", "등록 성공");
         return "itemView/success";
     }
-
-
-
 
 }
