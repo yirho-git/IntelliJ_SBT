@@ -6,6 +6,7 @@ import kr.or.ddit.vo.Item;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -34,22 +35,24 @@ public class ItemController {
      * register form에서 등록할 파일을 선택 할때마다 uploadPath의 경로(내 로컬 저장소)에 파일저장
      * form을 submit하면 DB에 등록.
      * !주의 : 선택만하고 폼 전송을 하지 않을시 '고아 파일'로 디스크에 남음(용량 주의)
-     * @return ResponseEntity<byte[]>
+     * @return ResponseEntity<String>
      */
     @ResponseBody
     @PostMapping(value="/uploadFile", produces="text/plain;charset=utf-8" )
-    public ResponseEntity<byte[]> uploadFile(MultipartFile file) throws IOException {
-        log.info("uploadFile()...");
-        log.info("fileName:" + file.getOriginalFilename());
+    public ResponseEntity<String> uploadFile(MultipartFile file) throws IOException {
+        log.info("[log]uploadFile()...");
+        log.info("[log]fileName : " + file.getOriginalFilename());
 
-        String savedName = UploadFileUtils.uploadFile(uploadPath, file.getOriginalFilename(), file.getBytes());
+        // String savedName = UploadFileUtils.uploadFile(uploadPath, file.getOriginalFilename(), file.getBytes());
+        // uploadFile 오버로딩 메서드(향상된 기능) 사용
+        String savedName = UploadFileUtils.uploadFile(uploadPath, file);
 
-        return null;
+        return new ResponseEntity<String>(savedName, HttpStatus.OK);
     }
 
     @GetMapping("/register")
     public String registerForm(){
-        log.info("registerForm()...");
+        log.info("[log]registerForm()...");
 
         return "itemView/register";
     }
