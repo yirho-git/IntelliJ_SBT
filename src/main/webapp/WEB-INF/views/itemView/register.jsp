@@ -17,13 +17,13 @@
         <tr>
             <th>상품명</th>
             <td>
-                <input type="text" name="itemName" value=""/>
+                <input type="text" name="itemName" />
             </td>
         </tr>
         <tr>
             <th>가격</th>
             <td>
-                <input type="text" name="price" value=""/>
+                <input type="text" name="price" />
             </td>
         </tr>
         <tr>
@@ -43,7 +43,7 @@
     <button type="button" id="listBtn">list</button>
 </form>
 </body>
-<script src="/assets/js/item/upload.js"></script>
+<script src="${pageContext.request.contextPath}/assets/js/item/upload.js"></script>
 <script type="text/javascript">
     /* // .js로 분리
     let inputFile = document.querySelector(`input[name="inputFile"]`);
