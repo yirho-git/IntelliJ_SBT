@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper	namespace="kr.or.ddit.controller.member.mapper.IMemberMapper">
+
+	<resultMap id="memberMap" type="kr.or.ddit.vo.Member">
+		<id property="userNo" column="user_No" />
+		<result property="userId" column="user_id" />
+		<result property="userPw" column="user_pw" />
+		<result property="userName" column="user_name" />
+		<result property="regDate" column="reg_date" />
+		<result property="updDate" column="upd_date" />
+		<collection property="authList" resultMap="memberAuthMap" />
+	</resultMap>
+
+	<resultMap id="memberAuthMap" type="kr.or.ddit.vo.MemberAuth">
+		<result property="userNo" column="user_no" />
+		<result property="auth" column="auth" />
+	</resultMap>
+
+	<insert id="insert" parameterType="kr.or.ddit.vo.Member"
+		useGeneratedKeys="true">
+        <selectKey keyProperty="userNo" order="BEFORE" resultType="int">
+            select seq_member.nextval from dual
+        </selectKey>
+        insert into Member(
+        USER_NO,
+        USER_ID,
+        USER_PW,
+        USER_NAME,
+        REG_DATE,
+        UPD_DATE
+        )
+        values(
+        #{userNo},
+        #{userId},
+        #{userPw},
+        #{userName},
+        sysdate,
+        sysdate
+        )
+    </insert>
+
+	<insert id="insertAuth" parameterType="kr.or.ddit.vo.MemberAuth">
+		insert into
+		MEMBER_AUTH(USER_NO, AUTH)
+		values(#{userNo}, #{auth})
+	</insert>
+
+	<select id="list" resultType="kr.or.ddit.vo.Member">
+		select USER_NO,
+			USER_ID,
+			USER_PW,
+			USER_NAME,
+			REG_DATE,
+			UPD_DATE
+		from member
+	</select>
+
+	<select id="read" parameterType="int" resultMap="memberMap">
+		select m.user_no, m.user_id, m.user_name, m.reg_date, m.upd_date, a.auth
+		from member m
+		left outer join member_auth a on(m.user_no = a.user_no)
+		where m.user_no = #{userNo}
+	</select>
+
+	<delete id="delete" parameterType="int">
+		delete from member where  user_no = #{value}
+	</delete>
+
+	<delete id="deleteAuth" parameterType="int">
+		delete from member_auth where user_no = #{value}
+	</delete>
+
+	<update id="modify" parameterType="Member">
+		update member set
+		    user_id = #{userId},
+			user_name = #{userName},
+		    upd_date = sysdate
+		where user_no = #{userNo}
+	</update>
+
+	<select id="searchList" resultType="Member">
+		select user_no,
+			   USER_ID,
+			   USER_PW,
+			   USER_NAME,
+			   REG_DATE,
+			   UPD_DATE
+		from member
+		<where>
+			<if test="keyword != null and keyword != ''">
+				and (
+				user_id like '%' || #{keyword} || '%'
+                or user_name like '%' || #{keyword} || '%'
+                )
+			</if>
+		</where>
+	</select>
+
+</mapper>
